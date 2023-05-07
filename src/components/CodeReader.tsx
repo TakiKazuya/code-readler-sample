@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { BarcodeFormat, DecodeHintType, BrowserMultiFormatReader } from '@zxing/library';
 
-type Mode = 'qr' | 'barcode';
+type Mode = 'qr' | 'intermediate' | 'barcode';
 
 const CodeReader: React.FC = () => {
   const [result, setResult] = useState('No result');
@@ -50,14 +50,31 @@ const CodeReader: React.FC = () => {
   }, [codeReader]);
 
   const toggleMode = () => {
-    setMode((prevMode) => (prevMode === 'qr' ? 'barcode' : 'qr'));
+    setMode((prevMode) => {
+      if (prevMode === 'qr') return 'intermediate';
+      if (prevMode === 'intermediate') return 'barcode';
+      return 'qr';
+    });
+  };
+
+  const getVideoHeight = () => {
+    switch (mode) {
+      case 'qr':
+        return '100%';
+      case 'intermediate':
+        return '300px';
+      case 'barcode':
+        return '100px';
+      default:
+        return '100%';
+    }
   };
 
   return (
     <div>
-      <button onClick={toggleMode}>{mode === 'qr' ? 'Switch to Barcode Mode' : 'Switch to QR Code Mode'}</button>
+      <button onClick={toggleMode}>Switch Mode</button>
       <br />
-      <video ref={videoRef} style={{ width: '100%', height: mode === 'qr' ? '100%' : '100px', objectFit: 'none' }} />
+      <video ref={videoRef} style={{ width: '100%', height: getVideoHeight(), objectFit: 'none' }} />
       <p>{result}</p>
     </div>
   );
