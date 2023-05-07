@@ -12,13 +12,26 @@ const CodeReader: React.FC = () => {
   hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
   const codeReader = new BrowserMultiFormatReader(undefined, 500);
 
+  const resultBuffer: string[] = [];
+
   useEffect(() => {
     const startScanning = async () => {
       if (videoRef.current) {
         try {
           await codeReader.decodeFromVideoDevice(null, videoRef.current, (result, _error) => {
             if (result) {
-              setResult(result.getText());
+              const text = result.getText();
+
+              // 精度向上のため、3回連続で同じ値が出た場合のみ採用する
+              if (resultBuffer.length === 3) {
+                resultBuffer.shift();
+              }
+
+              resultBuffer.push(text);
+
+              if (resultBuffer.every((item) => item === text)) {
+                setResult(text);
+              }
             }
           });
         } catch (err) {
