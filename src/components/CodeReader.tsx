@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { BarcodeFormat, DecodeHintType, BrowserMultiFormatReader } from '@zxing/library';
 
-type Mode = 'qr' | 'intermediate' | 'barcode';
+type Mode = 'large' | 'medium' | 'small';
 
 const CodeReader: React.FC = () => {
   const [result, setResult] = useState('No result');
-  const [mode, setMode] = useState<Mode>('qr');
+  const [mode, setMode] = useState<Mode>('large');
   const videoRef = useRef<HTMLVideoElement>(null);
   const hints = new Map();
   const formats = [BarcodeFormat.QR_CODE, BarcodeFormat.CODE_128, BarcodeFormat.EAN_13, BarcodeFormat.EAN_8];
@@ -51,19 +51,19 @@ const CodeReader: React.FC = () => {
 
   const toggleMode = () => {
     setMode((prevMode) => {
-      if (prevMode === 'qr') return 'intermediate';
-      if (prevMode === 'intermediate') return 'barcode';
-      return 'qr';
+      if (prevMode === 'large') return 'medium';
+      if (prevMode === 'medium') return 'small';
+      return 'large';
     });
   };
 
   const getVideoHeight = () => {
     switch (mode) {
-      case 'qr':
+      case 'large':
         return '100%';
-      case 'intermediate':
+      case 'medium':
         return '300px';
-      case 'barcode':
+      case 'small':
         return '100px';
       default:
         return '100%';
