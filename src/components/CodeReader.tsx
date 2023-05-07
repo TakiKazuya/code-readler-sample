@@ -13,11 +13,9 @@ const CodeReader: React.FC = () => {
     const startScanning = async () => {
       if (videoRef.current) {
         try {
-          await codeReader.decodeFromVideoDevice(null, videoRef.current, (result, error) => {
+          await codeReader.decodeFromVideoDevice(null, videoRef.current, (result, _error) => {
             if (result) {
               setResult(result.getText());
-            } else if (error) {
-              console.error(error);
             }
           });
         } catch (err) {
